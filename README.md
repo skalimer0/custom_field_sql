@@ -1,6 +1,8 @@
 Redmine sql custom field
 ==================
-This plugin add sql format for custom fields.
+This plugin add two sql format for custom fields
+* **sql** - format for simple sql-expression.
+* **sql_search** - format for search sql query with form parameters
 
 Compatibility
 -------------
@@ -19,13 +21,51 @@ $ git clone https://github.com/apsmir/custom_field_sql.git
 Usage
 ----------------------
 1) Visit **Administration->Custom fields**. 
-2) Press the button **New custom field**. Select format **Sql**.
+2) Press the button **New custom field**. Select format **Sql** or **Sql search**.
 3) Enter sql query 
 
 SQL parameters
 ----------------------
 You can use parameters for sql expression.
-%id% => id of the customized object
+**sql** 
+format: support %id% => id of the customized object. This may be id of issue or id of project
+
+**sql_search** 
+Query must have field 'value'. This field used be as field value.
+format: support multiply forms parameters. Parameters must be written in jquery. 
+
+----------------------
+Simple 1:
+
+ "sql expression": 
+ 
+ `select subject as value, description as label from issues where subject like ? and description like ?  `
+ 
+ "sql form params":
+ 
+`p0='%'+$('#issue_custom_field_values_31').val()+'%'`
+`p1='%'+$('#issue_custom_field_values_30').val()+'%'`
+
+----------------------
+Simple 2 (for MySQL):
+
+ "sql expression": 
+ 
+ `select subject as value from issues where id = if( ? ='new', id, ?);`
+ 
+ 
+ "sql form params":
+ 
+`p0=window.location.toString().split('/').pop()`
+
+`p1=window.location.toString().split('/').pop()`
+
+
+This expression `window.location.toString().split('/').pop()` calculate **issue id** on form. For new issues calculated value = 'new'.
+
+----------------------
+
+Query in **sql search** field can be executed by mouse click. Use parametr "search by click" in settings page.
 
 Scripts
 ----------------------
